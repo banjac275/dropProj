@@ -1,0 +1,127 @@
+.drop-main {
+    margin: auto;
+    display: inline-block;
+}
+
+input {
+    border-top: 2px solid grey;
+    border-bottom: 2px solid grey;
+    border-right: 2px solid grey;
+    border-left: none;
+}
+
+span {
+    color: red;
+}
+
+.inserted {
+    background-color: grey;
+    border-radius: 5px;
+    color:white;
+    font-size: 16px;
+    height: 23px;
+    margin-left: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-top: 4px;
+    display: inline-block;
+    align-items: center;
+    animation: apear 1s linear;
+    animation-direction: alternate;
+}
+
+.inserted-btn {
+    font-weight: bold; 
+    color:rgb(255, 228, 228); 
+    background-color: rgb(56, 54, 54);
+    border-radius: 2px;
+    cursor: pointer;
+    width: 20px;
+    margin-top: 2px;
+}
+
+.inserted-parent {
+    display: flex;
+    border-top: 2px solid grey;
+    border-bottom: 2px solid grey;
+    border-left: 2px solid grey;
+    border-right: none;
+}
+
+.sepElems {
+    flex: 1 1;
+}
+
+.inserted-parent-after {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1;
+}
+
+.inserted-after {
+    min-width: 60px;
+    font-size: 18px;
+    margin-left: 10px;
+    padding-left: 5px;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+    border: 1px solid grey;
+    border-radius: 10px;
+    text-align: center;
+    animation: apear 1s linear;
+    animation-direction: alternate;
+}
+
+.drop-input {
+    display: flex;
+    
+}
+
+.dropdown{
+    border: 1px solid grey;
+    font-size: 18px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.dropdown > div {
+    border: 1px solid grey;
+    padding-left: 1px;
+    animation: dropDown 1s linear;
+    animation-direction: alternate;
+}
+
+.dropdown > div:hover {
+    margin-left: 0.5em;
+    padding-left: 0.5em;
+    background-color: lightgrey;
+    color: white;
+    cursor: pointer;
+}
+
+.dropdown > div:focus{
+    margin-left: 0.5em;
+    padding-left: 0.5em;
+    background-color: lightgrey;
+    color: white;
+}
+
+@keyframes dropDown {
+    from{
+        max-height: 0;
+    }
+    to{
+        max-height: 120px;
+    }
+}
+
+@keyframes apear {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+
+}
