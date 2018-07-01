@@ -30,7 +30,7 @@ class Dropdown {
         this.height = userPreferences.height;
         this.width = userPreferences.width;
         this.listedElStyle = userPreferences.listedElStyle;
-        this.data = data;
+        this.data = this.obtainData(data);
         this.lastEntry = "";
         this.selElement = [];
         this.c = c;        
@@ -60,8 +60,10 @@ class Dropdown {
             }); 
         } else {
             let tempNum;
-            (this.data.length > 4) ? tempNum = 4 : tempNum = this.data.length; 
-            for(let i = 0; i < tempNum; i++) temp2.push(this.data[i]);
+            if(this.data !== undefined){
+                (this.data.length > 4) ? tempNum = 4 : tempNum = this.data.length; 
+                for(let i = 0; i < tempNum; i++) temp2.push(this.data[i]);
+            }
         }
 
         let tempLen;
@@ -228,6 +230,49 @@ class Dropdown {
         console.log(this.selElement);
         this.input.focus();
         this.emptyStr();  
+    }
+
+    obtainData(stuff){
+        if(Array.isArray(stuff)) return stuff;
+        else {
+            fetch(stuff).then(response => response.json()).then(recv => {
+                console.log(recv);
+                if(recv.length !== 0){
+                    let tmp = [];
+                    recv.forEach((el) => {
+                        let keyList = Object.keys(el);
+                        keyList.forEach((keyEl) => {
+                            if(keyEl !== "description" && keyEl !== "id" && keyEl !== "locations" && keyEl !== "people" && keyEl !== "url" && keyEl !== "species" && keyEl !== "vehicles" && keyEl !== "rt_score")
+                                this.recursiveGetElements(el[keyEl],tmp);
+                        });
+                    });
+                    console.log(tmp);
+                    let tmpNoDoubles = [];
+                    let i = 0;
+                    while(i < tmp.length){
+                        let tmpEl = tmp[i];
+                        tmp.forEach((el) => {
+                           if (el !== tmpEl) tmpNoDoubles.push(el);
+                        });
+                        tmp = tmpNoDoubles;
+                        tmpNoDoubles = [];
+                        i++;
+                    }
+                    this.data = tmp;
+                    console.log(tmp);
+                    return tmp;
+                }
+            });
+        }
+    }
+
+    recursiveGetElements(el, arr) {
+        if(el !== null && typeof el !== 'object') arr.push(el);
+        else if(el !== null && typeof el === 'object') {
+            for(let key in el) {
+                this.recursiveGetElements(key, arr);
+            }
+        }
     }
 
 }
