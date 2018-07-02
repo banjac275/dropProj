@@ -35,6 +35,9 @@ class Dropdown {
         this.selElement = [];
         this.c = c;        
         this.dropParent.style.display = "none";
+        this.defHeight5 = this.height * 5;
+        this.htmlArr = [];
+        this.colored = [];
     }
     
     addDropdown(info, num){
@@ -73,16 +76,23 @@ class Dropdown {
             let temp;
             (num !== 0) ? temp = temp1 : temp = temp2;
 
+          if(num === 0){
             temp.forEach((el, ind) => {
-                this.drop.innerHTML += `<div tabindex="${this.c}" id="pos${ind}${this.c}" class="dropmenu${this.c}">${el}</div>`;                    
+              this.drop.innerHTML += `<div tabindex="${this.c}" id="pos${ind}${this.c}" class="dropmenu${this.c}">${el}</div>`;                
             });
+            this.drop.style.height = this.height * temp2.length;
+          } else {
+            this.colored = temp;
+            this.addMore(temp, false);            
+          }
         }
 
-        this.drop.style.height = this.height * temp2.length;
         this.dropMenu = document.querySelectorAll(`.dropmenu${this.c}`);
+        console.log(this.dropMenu);
+
 
         if(temp2.length != 0){
-            this.initDropdownListeners(temp2, this.dropMenu);
+          (num === 0) ? this.initDropdownListeners(temp2, this.dropMenu, 0) : this.initDropdownListeners(temp2, this.drop, 1);
         } else {
             this.dropParent.style.display = "none";
         }
@@ -110,7 +120,7 @@ class Dropdown {
             }
             if(e.key == "ArrowDown"){
                 this.dropParent.style.display = "block";
-                if(this.dropMenu.length !== 0) document.getElementById(`pos0${this.c}`).focus();
+                if(this.drop.childNodes.length !== 0) document.getElementById(`pos0${this.c}`).focus();
             }
 
             if(e.key === "Enter" && this.input.value !== "" && this.input.value.length > 1){
@@ -128,16 +138,16 @@ class Dropdown {
 
         this.drop.addEventListener("keyup", (y) => {
             if(y.key == "ArrowDown"){
-                this.dropMenu.forEach((el,ind) => {
-                    if(y.path[0] === el && ind < this.dropMenu.length-1){
-                            this.dropMenu[ind+1].focus();
+                this.drop.childNodes.forEach((el,ind) => {
+                    if(y.path[0] === el && ind < this.drop.childNodes.length-1){
+                            this.drop.childNodes[ind+1].focus();
                         }
                 });
             }
             if(y.key == "ArrowUp"){
-                this.dropMenu.forEach((el,ind) => {
+                this.drop.childNodes.forEach((el,ind) => {
                     if(y.path[0] === el){
-                        if(ind > 0) this.dropMenu[ind-1].focus();
+                        if(ind > 0) this.drop.childNodes[ind-1].focus();
                         if(ind === 0) this.input.focus();
                     }
                 });        
@@ -160,15 +170,18 @@ class Dropdown {
 
     }
 
-    initDropdownListeners(arr, loc){
-        for(let i = 0; i < arr.length; i++){
-            loc[i].addEventListener("click", () =>{
-                this.isSelected(arr[i]);             
+    initDropdownListeners(arr, loc, num){
+        let childs;
+        (num === 0) ? childs = loc : childs = loc.childNodes;
+        console.log(childs);
+        for(let i = 0; i < childs.length; i++){
+            childs[i].addEventListener("click", () =>{
+                (num === 1 && i === childs.length-1) ? this.addMore(this.colored, true) : this.isSelected(arr[i]);             
             });
-            loc[i].addEventListener("focus", (k) =>{
+            childs[i].addEventListener("focus", (k) =>{
                     k.path[0].addEventListener("keyup", (line) => {
                         if(line.key == "Enter"){
-                        this.isSelected(arr[i]);                       
+                          (num === 1 && i === childs.length-1) ? this.addMore(this.colored, true) : this.isSelected(arr[i]);                      
                     }
                 });                    
             });
@@ -236,7 +249,7 @@ class Dropdown {
         if(Array.isArray(stuff)) return stuff;
         else {
             fetch(stuff).then(response => response.json()).then(recv => {
-                console.log(recv);
+                //console.log(recv);
                 if(recv.length !== 0){
                     let tmp = [];
                     recv.forEach((el) => {
@@ -246,7 +259,7 @@ class Dropdown {
                                 this.recursiveGetElements(el[keyEl],tmp);
                         });
                     });
-                    console.log(tmp);
+                    //console.log(tmp);
                     let tmpNoDoubles = [];
                     let i = 0;
                     while(i < tmp.length){
@@ -259,7 +272,8 @@ class Dropdown {
                         i++;
                     }
                     this.data = tmp;
-                    console.log(tmp);
+                    //console.log(tmp);
+                    this.emptyStr();
                     return tmp;
                 }
             });
@@ -273,6 +287,40 @@ class Dropdown {
                 this.recursiveGetElements(key, arr);
             }
         }
+    }
+
+    addMore(temp, check = false) {
+      this.htmlArr = [];
+      temp.forEach((el, ind) => {
+        this.htmlArr.push(`<div tabindex="${this.c}" id="pos${ind}${this.c}" class="dropmenu${this.c}">${el}</div>`);                
+      });
+      if(this.htmlArr.length !== 0 && check === true){
+        let count = 0;
+        this.dropMenu = document.querySelectorAll(`.dropmenu${this.c}`);
+        for(let i = 0; i < this.dropMenu.length; i++)
+          if(i !== 0 && i % 3 === 0) count++;
+        count *= 4;
+        let safen = 0;
+        if(count < temp.length) safen = temp.length - count;
+        if(safen < 4) count += safen;
+        else count += 4;
+        safen = count;
+        this.drop.innerHTML = "";
+        this.drop.style.height = this.height * (count+1); 
+        this.htmlArr.forEach((el, ind) => {
+          if(count > 0) this.drop.innerHTML += el;
+          else if (count === 0 && safen !== temp.length) this.drop.innerHTML += `<div tabindex="${this.c}" id="extending${this.c}" class="dropmenuExtends${this.c}">Add more...</div>`;
+          count--;             
+        });
+        this.initDropdownListeners(temp, this.drop, 1);         
+      } else {
+        this.htmlArr.forEach((el, ind) => {
+          if(ind < 4) this.drop.innerHTML += el;
+          else if(ind === 4) this.drop.innerHTML += `<div tabindex="${this.c}" id="extending${this.c}" class="dropmenuExtends${this.c}">Add more...</div>`;
+        });
+        this.drop.style.height = this.defHeight5;
+      }
+
     }
 
 }
