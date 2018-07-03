@@ -38,6 +38,7 @@ class Dropdown {
         this.defHeight5 = this.height * 5;
         this.htmlArr = [];
         this.colored = [];
+        this.regular = [];
     }
     
     addDropdown(info, num){
@@ -83,12 +84,13 @@ class Dropdown {
             this.drop.style.height = this.height * temp2.length;
           } else {
             this.colored = temp;
+            this.regular = temp2;
             this.addMore(temp, false);            
           }
         }
 
         this.dropMenu = document.querySelectorAll(`.dropmenu${this.c}`);
-        console.log(this.dropMenu);
+        //console.log(this.dropMenu);
 
 
         if(temp2.length != 0){
@@ -162,7 +164,7 @@ class Dropdown {
             
         });
 
-        document.addEventListener("click", (ev) => {
+        document.addEventListener("click", () => {
             if(this.input.value === "")  this.dropParent.style.display = "none";
             //else this.dropParent.style.display = "block";
 
@@ -173,15 +175,15 @@ class Dropdown {
     initDropdownListeners(arr, loc, num){
         let childs;
         (num === 0) ? childs = loc : childs = loc.childNodes;
-        console.log(childs);
+        //console.log(childs);
         for(let i = 0; i < childs.length; i++){
             childs[i].addEventListener("click", () =>{
-                (num === 1 && i === childs.length-1) ? this.addMore(this.colored, true) : this.isSelected(arr[i]);             
+                (num === 1 && i === childs.length-1 && childs[i].id === `extending${this.c}`) ? this.addMore(this.colored, true) : this.isSelected(arr[i]);             
             });
             childs[i].addEventListener("focus", (k) =>{
                     k.path[0].addEventListener("keyup", (line) => {
                         if(line.key == "Enter"){
-                          (num === 1 && i === childs.length-1) ? this.addMore(this.colored, true) : this.isSelected(arr[i]);                      
+                          (num === 1 && i === childs.length-1 && childs[i].id === `extending${this.c}`) ? this.addMore(this.colored, true) : this.isSelected(arr[i]);                      
                     }
                 });                    
             });
@@ -227,14 +229,15 @@ class Dropdown {
         this.emptyStr();        
     }
 
-    isDeselected(elm, par){
+    isDeselected(elm){
         let insElems;
         (this.listedElStyle == "bubble") ? insElems = document.querySelectorAll(`.inserted-sel${this.c}`) : insElems = document.querySelectorAll(`.inserted-sel-after${this.c}`);
-        par.innerHTML = "";
+        //par.innerHTML = "";
         let indTemp;
         insElems.forEach((el, ind) => {
-            (el != elm) ? par.appendChild(el) : indTemp = ind;
+            if (el == elm) indTemp = ind;
         });
+        (this.listedElStyle == "bubble") ? document.getElementById(`inserted-parent${this.c}`).removeChild(insElems[indTemp]) : document.getElementById(`inserted-parent-after${this.c}`).removeChild(insElems[indTemp])
         let tmp = [];
         this.selElement.forEach((el, ind) => {
             (ind != indTemp) ? tmp.push(el) : this.data.push(el);
@@ -307,12 +310,12 @@ class Dropdown {
         safen = count;
         this.drop.innerHTML = "";
         this.drop.style.height = this.height * (count+1); 
-        this.htmlArr.forEach((el, ind) => {
+        this.htmlArr.forEach((el) => {
           if(count > 0) this.drop.innerHTML += el;
           else if (count === 0 && safen !== temp.length) this.drop.innerHTML += `<div tabindex="${this.c}" id="extending${this.c}" class="dropmenuExtends${this.c}">Add more...</div>`;
           count--;             
         });
-        this.initDropdownListeners(temp, this.drop, 1);         
+        this.initDropdownListeners(this.regular, this.drop, 1);         
       } else {
         this.htmlArr.forEach((el, ind) => {
           if(ind < 4) this.drop.innerHTML += el;
@@ -320,7 +323,7 @@ class Dropdown {
         });
         this.drop.style.height = this.defHeight5;
       }
-
+      this.input.focus();
     }
 
 }
