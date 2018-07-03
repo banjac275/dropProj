@@ -2,33 +2,27 @@ class Dropdown {
     constructor(userPreferences, data, c){
         let div = document.createElement("div");
         div.id = `drop-main${c}`;
-        div.classList.add("drop-main");
+        div.classList.add("drop-main", "defSettings");
         div.innerHTML = `<div id="drop-input${c}" class="drop-input">
                             <div id="inserted-parent${c}" class="inserted-parent"></div>
                             <div id="sepElems${c}" class="sepElems">
-                                <input type="text" id="input-text${c}" class="input-text" autocomplete="off" placeholder="  Search...">
-                                <div id="drop${c}" class="drop">
+                                <input type="text" id="input-text${c}" class="input-text defSettings" autocomplete="off" placeholder="  Search...">
+                                <div id="drop${c}" class="drop defSettings">
                                     <div id="dropdown${c}" class="dropdown">
                                     </div>
                                 </div>
                             </div>
                             <div id="inserted-parent-after${c}" class="inserted-parent-after"></div>
                         </div>`;   
-        div.style.minWidth = userPreferences.width;
-        div.style.minHeight = userPreferences.height;
         document.body.appendChild(div);
         this.input = document.getElementById(`input-text${c}`);
         this.drop = document.getElementById(`dropdown${c}`);
         this.dropParent = document.getElementById(`drop${c}`);
         this.dropMenu = null;
-        document.getElementById(`inserted-parent${c}`).style.maxHeight = userPreferences.height;
-        this.input.style.minWidth = userPreferences.width;
-        this.input.style.height = userPreferences.height;        
-        this.drop.style.width = userPreferences.width;
-        this.drop.style.minHeight = userPreferences.height;
-        this.drop.style.height = userPreferences.height * data.length;
-        this.height = userPreferences.height;
-        this.width = userPreferences.width;
+        document.getElementById(`inserted-parent${c}`).style.maxHeight = userPreferences.height;    
+        this.drop.style.maxHeight = this.input.style.height * data.length;
+        this.height = this.input.style.height;
+        this.width = this.input.style.width;
         this.listedElStyle = userPreferences.listedElStyle;
         this.data = this.obtainData(data);
         this.lastEntry = "";
@@ -79,7 +73,7 @@ class Dropdown {
 
           if(num === 0){
             temp.forEach((el, ind) => {
-              this.drop.innerHTML += `<div tabindex="${this.c}" id="pos${ind}${this.c}" class="dropmenu${this.c}">${el}</div>`;                
+              this.drop.innerHTML += `<div tabindex="${this.c}" id="pos${ind}${this.c}" class="dropmenu${this.c} dropmenu">${el}</div>`;                
             });
             this.drop.style.height = this.height * temp2.length;
           } else {
@@ -295,7 +289,7 @@ class Dropdown {
     addMore(temp, check = false) {
       this.htmlArr = [];
       temp.forEach((el, ind) => {
-        this.htmlArr.push(`<div tabindex="${this.c}" id="pos${ind}${this.c}" class="dropmenu${this.c}">${el}</div>`);                
+        this.htmlArr.push(`<div tabindex="${this.c}" id="pos${ind}${this.c}" class="dropmenu${this.c} dropmenu">${el}</div>`);                
       });
       if(this.htmlArr.length !== 0 && check === true){
         let count = 0;
@@ -312,14 +306,14 @@ class Dropdown {
         this.drop.style.height = this.height * (count+1); 
         this.htmlArr.forEach((el) => {
           if(count > 0) this.drop.innerHTML += el;
-          else if (count === 0 && safen !== temp.length) this.drop.innerHTML += `<div tabindex="${this.c}" id="extending${this.c}" class="dropmenuExtends${this.c}">Add more...</div>`;
+          else if (count === 0 && safen !== temp.length) this.drop.innerHTML += `<div tabindex="${this.c}" id="extending${this.c}" class="dropmenuExtends${this.c} dropmenu">Add more...</div>`;
           count--;             
         });
         this.initDropdownListeners(this.regular, this.drop, 1);         
       } else {
         this.htmlArr.forEach((el, ind) => {
           if(ind < 4) this.drop.innerHTML += el;
-          else if(ind === 4) this.drop.innerHTML += `<div tabindex="${this.c}" id="extending${this.c}" class="dropmenuExtends${this.c}">Add more...</div>`;
+          else if(ind === 4) this.drop.innerHTML += `<div tabindex="${this.c}" id="extending${this.c}" class="dropmenuExtends${this.c} dropmenu">Add more...</div>`;
         });
         this.drop.style.height = this.defHeight5;
       }

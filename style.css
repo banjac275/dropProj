@@ -46,16 +46,22 @@ span {
     border-bottom: 2px solid grey;
     border-left: 2px solid grey;
     border-right: none;
+    max-height: 35px;
 }
 
 .sepElems {
     flex: 1 1;
+    max-height: 35px;
 }
 
 .inserted-parent-after {
     display: flex;
     flex-direction: column;
     flex: 1 1;
+}
+
+.dropmenu {
+  height: 35px;
 }
 
 .inserted-after {
@@ -100,10 +106,15 @@ span {
 }
 
 .dropdown > div:focus{
-    margin-left: 0.5em;
-    padding-left: 0.5em;
-    background-color: lightgrey;
-    color: white;
+  margin-left: 0.5em;
+  padding-left: 0.5em;
+  background-color: lightgrey;
+  color: white;
+}
+
+.defSettings {
+  min-width: 300px; 
+  min-height: 35px;
 }
 
 @keyframes dropDown {
